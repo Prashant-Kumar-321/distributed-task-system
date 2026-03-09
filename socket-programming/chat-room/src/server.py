@@ -3,15 +3,16 @@ import threading
 
 # TO-DO
 # - Store client connections and its alias in the list
-# - Broadcasting message to all clients
-# - Handle each client connection in a separate thread 
+# - Broadcasting messages to all clients
+# - Handle each client connection in a separate thread
 
 class ChatServer:
-    def __init__(self, host='', port=12345):
+    def __init__(self, host='', port=12345, backlog=2):
         self.host = host
         self.port = port
         self.clients = []
         self.aliases = [] 
+        self.backlog = backlog # maximum number of queued connections
         self.server_socket = None
     
     def start_server(self):
@@ -19,7 +20,7 @@ class ChatServer:
 
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.bind((self.host, self.port))
-        self.server_socket.listen(5)
+        self.server_socket.listen(self.backlog)
 
         print(f"Chat server is running and listening...\n")
 
@@ -30,7 +31,8 @@ class ChatServer:
             client_socket, addr = self.server_socket.accept()
             print(f"New connection from {addr}")
 
-            client_socket.send("ALIAS?".encode('utf-8'))
+            ask_alias_msg = "ALIAS?"
+            client_socket.send(ask_alias_msg.encode('utf-8'))
 
             alias = client_socket.recv(1024).decode('utf-8')
 

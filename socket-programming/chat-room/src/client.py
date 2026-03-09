@@ -1,7 +1,6 @@
 import threading
 import socket 
 
-
 # TO-DO
 # - Connect to the chat server 
 # - Receive Message from server
